@@ -10,27 +10,49 @@
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
-            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
-                </x-nav-link>
-                <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.*')">
-    {{ __('Attendance') }}
-</x-nav-link>
-                <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-                    {{ __('Students') }}
-                </x-nav-link>
-                <x-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
-                    {{ __('Teachers') }}
-                </x-nav-link>
-                <x-nav-link :href="route('marks.index')" :active="request()->routeIs('marks.*')">
-    {{ __('Marks') }}
-</x-nav-link>
-<x-nav-link :href="route('marks.report')" :active="request()->routeIs('marks.report')">
-    {{ __('Report Cards') }}
-</x-nav-link>
-            </div>
+                <!-- Desktop Navigation Links -->
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <!-- Everyone sees Dashboard -->
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-nav-link>
+
+                    <!-- Admin & Teacher Links -->
+                    @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
+                        <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.*')">
+                            {{ __('Attendance') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                            {{ __('Students') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Admin ONLY Link -->
+                    @if(Auth::user()->isAdmin())
+                        <x-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
+                            {{ __('Teachers') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Admin & Teacher Links -->
+                    @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
+                        <x-nav-link :href="route('marks.index')" :active="request()->routeIs('marks.*')">
+                            {{ __('Marks') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Everyone sees Report Cards -->
+                    <x-nav-link :href="route('marks.report')" :active="request()->routeIs('marks.report')">
+                        {{ __('Report Cards') }}
+                    </x-nav-link>
+                 <!-- Only Admins see Manage Users -->
+@if(Auth::user()->isAdmin())
+    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+        {{ __('Manage Users') }}
+    </x-nav-link>
+@endif
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
@@ -38,7 +60,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div>{{ Auth::user()->name }} <span class="text-xs text-gray-400">({{ ucfirst(Auth::user()->role) }})</span></div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -79,18 +101,46 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
+    <!-- Responsive Navigation Menu (Mobile) -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+
+            @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
+                <x-responsive-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.*')">
+                    {{ __('Attendance') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                    {{ __('Students') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
+                    {{ __('Teachers') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
+                <x-responsive-nav-link :href="route('marks.index')" :active="request()->routeIs('marks.*')">
+                    {{ __('Marks') }}
+                </x-responsive-nav-link>
+            @endif
+<x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+    {{ __('Manage Users') }}
+</x-nav-link>
+            <x-responsive-nav-link :href="route('marks.report')" :active="request()->routeIs('marks.report')">
+                {{ __('Report Cards') }}
             </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }} <span class="text-sm text-gray-500">({{ ucfirst(Auth::user()->role) }})</span></div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
 

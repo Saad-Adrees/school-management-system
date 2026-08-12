@@ -26,11 +26,13 @@ class TeacherController extends Controller
         return view('teachers.index', compact('teachers'));
     }
 
-    public function create()
-    {
-        $classes = SchoolClass::all();
-        return view('teachers.create', compact('classes'));
-    }
+   public function create()
+{
+    // Order classes numerically by ID
+    $classes = SchoolClass::orderBy('id', 'asc')->get();
+
+    return view('teachers.create', compact('classes'));
+}
 
     // ... your store, edit, update, destroy methods below
 

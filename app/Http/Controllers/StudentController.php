@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use Illuminate\Http\Request;
 use App\Models\SchoolClass;
+use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
@@ -21,25 +21,27 @@ class StudentController extends Controller
             });
         }
 
-        $students = $query->with('schoolClass')->latest()->get();
+        // Paginate results (10 items per page) & preserve search queries
+        $students = $query->with('schoolClass')->latest()->paginate(10)->withQueryString();
 
         return view('students.index', compact('students'));
     }
 
     public function create()
 {
-    $classes = SchoolClass::all();
+    $classes = SchoolClass::orderBy('id', 'asc')->get();
+
     return view('students.create', compact('classes'));
 }
 
     public function store(Request $request)
     {
         $request->validate([
-        'roll_number' => 'required|string|max:255',
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'class_id' => 'required|exists:classes,id', // <-- This is the updated line
-    ]);
+            'roll_number' => 'required|string|max:255|unique:students,roll_number',
+            'name'        => 'required|string|max:255',
+            'email'       => 'required|email|max:255|unique:students,email',
+            'class_id'    => 'required|exists:classes,id',
+        ]);
 
         Student::create($request->all());
 
@@ -48,16 +50,17 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        return view('students.edit', compact('student'));
+        $classes = SchoolClass::all();
+        return view('students.edit', compact('student', 'classes'));
     }
 
-   public function update(Request $request, Student $student)
+    public function update(Request $request, Student $student)
     {
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
-            'roll_number' => 'required|string|unique:students,roll_number,' . $student->id,
-            'email'       => 'required|email|unique:students,email,' . $student->id,
-            'class'       => 'required|string|max:255',
+            'roll_number' => 'required|string|max:255|unique:students,roll_number,' . $student->id,
+            'email'       => 'required|email|max:255|unique:students,email,' . $student->id,
+            'class_id'    => 'required|exists:classes,id',
         ]);
 
         $student->update($validated);
