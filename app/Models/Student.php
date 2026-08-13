@@ -9,17 +9,23 @@ class Student extends Model
 {
     use HasFactory;
 
-    // Notice we changed 'class' to 'class_id' here too!
     protected $fillable = ['roll_number', 'name', 'email', 'class_id'];
 
-    // A Student belongs to a Class
+    // Relationship to SchoolClass
     public function schoolClass()
     {
         return $this->belongsTo(SchoolClass::class, 'class_id');
     }
-    // A Student can have many Marks
+
+    // Relationship to Marks
     public function marks()
     {
         return $this->hasMany(Mark::class);
+    }
+
+    // Relationship to Attendances
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 }

@@ -35,9 +35,9 @@
                         </x-nav-link>
                     @endif
 
-                    <!-- Admin & Teacher Links -->
+                    <!-- Admin & Teacher Links (Marks) -->
                     @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
-                        <x-nav-link :href="route('marks.index')" :active="request()->routeIs('marks.*')">
+                        <x-nav-link :href="route('marks.index')" :active="request()->routeIs('marks.*') && !request()->routeIs('marks.report')">
                             {{ __('Marks') }}
                         </x-nav-link>
                     @endif
@@ -46,12 +46,13 @@
                     <x-nav-link :href="route('marks.report')" :active="request()->routeIs('marks.report')">
                         {{ __('Report Cards') }}
                     </x-nav-link>
-                 <!-- Only Admins see Manage Users -->
-@if(Auth::user()->isAdmin())
-    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
-        {{ __('Manage Users') }}
-    </x-nav-link>
-@endif
+
+                    <!-- Only Admins see Manage Users -->
+                    @if(Auth::user()->isAdmin())
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+                            {{ __('Manage Users') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -125,16 +126,20 @@
             @endif
 
             @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
-                <x-responsive-nav-link :href="route('marks.index')" :active="request()->routeIs('marks.*')">
+                <x-responsive-nav-link :href="route('marks.index')" :active="request()->routeIs('marks.*') && !request()->routeIs('marks.report')">
                     {{ __('Marks') }}
                 </x-responsive-nav-link>
             @endif
-<x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
-    {{ __('Manage Users') }}
-</x-nav-link>
+            
             <x-responsive-nav-link :href="route('marks.report')" :active="request()->routeIs('marks.report')">
                 {{ __('Report Cards') }}
             </x-responsive-nav-link>
+
+            @if(Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+                    {{ __('Manage Users') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

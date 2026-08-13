@@ -25,7 +25,7 @@ class AttendanceController extends Controller
         }
 
         $attendances = $query->latest('attendance_date')->paginate(10);
-        
+
         return view('attendances.index', compact('attendances'));
     }
 
@@ -38,9 +38,9 @@ class AttendanceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'student_id' => 'required|exists:students,id',
+            'student_id'      => 'required|exists:students,id',
             'attendance_date' => 'required|date',
-            'status' => 'required|in:Present,Absent,Leave',
+            'status'          => 'required|in:Present,Absent,Leave',
         ]);
 
         // Check if attendance already exists for this student on this date
@@ -66,9 +66,9 @@ class AttendanceController extends Controller
     public function update(Request $request, Attendance $attendance)
     {
         $request->validate([
-            'student_id' => 'required|exists:students,id',
+            'student_id'      => 'required|exists:students,id',
             'attendance_date' => 'required|date',
-            'status' => 'required|in:Present,Absent,Leave',
+            'status'          => 'required|in:Present,Absent,Leave',
         ]);
 
         $attendance->update($request->all());

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminUserController extends Controller
 {
@@ -29,5 +30,21 @@ class AdminUserController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'User role updated successfully!');
+    }
+
+    // Override specific user's password
+    public function updatePassword(Request $request, User $user)
+    {
+        // Validate the incoming password
+        $request->validate([
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Update and hash the password
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return redirect()->back()->with('success', 'Password updated successfully for ' . $user->name . '!');
     }
 }

@@ -15,7 +15,9 @@ class Attendance extends Model
         'status',
     ];
 
-    // Assuming your students table is mapped to a Student model
+    /**
+     * Get the student that owns the attendance record.
+     */
     public function student()
     {
         return $this->belongsTo(Student::class);
